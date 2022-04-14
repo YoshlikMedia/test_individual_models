@@ -73,4 +73,4 @@ for folder in folders:
         except Exception as ex:
             print(ex)
     print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
-    df.to_excel(f'{images_path + folder}/{folder}.xlsx')
+    df.to_excel(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
