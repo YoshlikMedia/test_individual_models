@@ -39,6 +39,7 @@ for folder in folders:
 
     for image in tqdm(images):
         model_ans = {}
+        model_ans_blur = []
         image_path = images_path + folder + image
         encoded_string = base64_encode(image_path)
         # Without Blurness
@@ -71,7 +72,7 @@ for folder in folders:
                 'default': model_ans['default'],
                 'rose_full_374': model_ans['rose_full_374'],
             }                    
-            df = df.append(data, ignore_index=True)
+            df = df.append(data)
         except Exception as ex:
             print(ex)
         # with Blurness
@@ -90,21 +91,21 @@ for folder in folders:
             response = requests.request("POST", url, headers=headers, data=payload)
             try:
                 result = response.json()['liveness_result']       
-                model_ans[model] = result['is_real']
+                model_ans_blur[model] = result['is_real']
             except Exception as ex:
                 try:
-                    model_ans[model] = response.json()['detail']
+                    model_ans_blur[model] = response.json()['detail']
                 except Exception as ex:
                     print(ex)
         try: 
             data = {
                 'image': image,
-                'blur-fasnet': model_ans['fasnet'],
-                'blur-FTNet': model_ans['FTNet'],
-                'blur-default': model_ans['default'],
-                'blur-rose_full_374': model_ans['rose_full_374'],
+                'blur-fasnet': model_ans_blur['fasnet'],
+                'blur-FTNet': model_ans_blur['FTNet'],
+                'blur-default': model_ans_blur['default'],
+                'blur-rose_full_374': model_ans_blur['rose_full_374'],
             }                    
-            df = df.append(data, ignore_index=True)
+            df = df.append(data)
         except Exception as ex:
             print(ex)
         
