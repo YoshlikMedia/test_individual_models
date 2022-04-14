@@ -30,6 +30,8 @@ with_filter = True
 open_eyes_only = True
 color_image_only = False
 
+filter = [True, False]
+
 for folder in folders:
     images = [f for f in os.listdir(images_path + folder) if f.endswith('.jpeg')]
     images = os.listdir(images_path + folder)
@@ -39,11 +41,12 @@ for folder in folders:
         model_ans = {}
         image_path = images_path + folder + image
         encoded_string = base64_encode(image_path)
+        # Without Blurness
         for model in tqdm(models):
             payload = json.dumps({
                 "model": "{}".format(model),
                 "single_face_only": single_face_only,
-                "with_filter": with_filter,
+                "with_filter": True,
                 "open_eyes_only": open_eyes_only,
                 "color_image_only": color_image_only,
                 "image_b64": "{}".format(encoded_string)
@@ -67,11 +70,44 @@ for folder in folders:
                 'FTNet': model_ans['FTNet'],
                 'default': model_ans['default'],
                 'rose_full_374': model_ans['rose_full_374'],
-            }    
-            
+            }                    
             df = df.append(data, ignore_index=True)
         except Exception as ex:
             print(ex)
+        # with Blurness
+        for model in tqdm(models):
+            payload = json.dumps({
+                "model": "{}".format(model),
+                "single_face_only": single_face_only,
+                "with_filter": False,
+                "open_eyes_only": open_eyes_only,
+                "color_image_only": color_image_only,
+                "image_b64": "{}".format(encoded_string)
+            })
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            response = requests.request("POST", url, headers=headers, data=payload)
+            try:
+                result = response.json()['liveness_result']       
+                model_ans[model] = result['is_real']
+            except Exception as ex:
+                try:
+                    model_ans[model] = response.json()['detail']
+                except Exception as ex:
+                    print(ex)
+        try: 
+            data = {
+                'image': image,
+                'blur-fasnet': model_ans['fasnet'],
+                'blur-FTNet': model_ans['FTNet'],
+                'blur-default': model_ans['default'],
+                'blur-rose_full_374': model_ans['rose_full_374'],
+            }                    
+            df = df.append(data, ignore_index=True)
+        except Exception as ex:
+            print(ex)
+        
     print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
     df.to_excel(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
     df = pd.DataFrame()
