@@ -71,8 +71,10 @@ for folder in folders:
                 'FTNet': model_ans['FTNet'],
                 'default': model_ans['default'],
                 'rose_full_374': model_ans['rose_full_374'],
-            }                    
-            df = df.append(data)
+            }   
+            # adding data to dataframe    
+            # df = df.append(data)
+            df = pd.concat([df, pd.DataFrame(data, index=[1])])
         except Exception as ex:
             print(ex)
         # with Blurness
@@ -105,7 +107,9 @@ for folder in folders:
                 'blur-default': model_ans_blur['default'],
                 'blur-rose_full_374': model_ans_blur['rose_full_374'],
             }                    
-            df = df.append(data)
+            # df = df.append(data)
+            df = pd.concat([df, pd.DataFrame(data, index=[1])])
+
         except Exception as ex:
             print(ex)
         
