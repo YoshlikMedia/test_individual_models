@@ -30,7 +30,7 @@ open_eyes_only = True
 color_image_only = False
 
 for folder in folders:
-    images = [f for f in os.listdir(images_path + folder) if f.endswith('.jpg')]
+    images = [f for f in os.listdir(images_path + folder) if f.endswith('.jpeg')]
     images = os.listdir(images_path + folder)
     print(images)
 
