@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 url = "http://192.168.0.199:5000/api/v1/detect-liveness"
 models = ['fasnet', 'FTNet', 'default', 'rose_full_374']
-images_path = '/home/myid/test/detector/'
+images_path = '/home/myid/test/test_individual_models/'
 df = pd.DataFrame()
 folders = ['AA3642573/', 'AA4469267/', 'AC2155899/']
 
