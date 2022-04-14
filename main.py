@@ -92,10 +92,12 @@ for folder in folders:
                 'blur-default': model_ans_blur['default'],
                 'blur-rose_full_374': model_ans_blur['rose_full_374'],
             }   
+
             df = df.append(data, ignore_index=True)
+            print(df)
         except Exception as ex:
             print(ex)
         
-    print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
+    # print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
     df.to_excel(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
     df = pd.DataFrame()
