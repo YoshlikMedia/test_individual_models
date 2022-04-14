@@ -29,8 +29,7 @@ single_face_only = True
 with_filter = True
 open_eyes_only = True
 color_image_only = False
-
-filter = [True, False]
+headers = {'Content-Type': 'application/json'}
 
 for folder in folders:
     images = [f for f in os.listdir(images_path + folder) if f.endswith('.jpeg')]
@@ -42,7 +41,7 @@ for folder in folders:
         model_ans_blur = []
         image_path = images_path + folder + image
         encoded_string = base64_encode(image_path)
-        # Without Blurness
+
         for model in tqdm(models):
             payload = json.dumps({
                 "model": "{}".format(model),
@@ -52,9 +51,7 @@ for folder in folders:
                 "color_image_only": color_image_only,
                 "image_b64": "{}".format(encoded_string)
             })
-            headers = {
-                'Content-Type': 'application/json'
-            }
+
             response = requests.request("POST", url, headers=headers, data=payload)
             try:
                 result = response.json()['liveness_result']       
@@ -64,22 +61,8 @@ for folder in folders:
                     model_ans[model] = response.json()['detail']
                 except Exception as ex:
                     print(ex)
-        try: 
-            data = {
-                'image': image,
-                'fasnet': model_ans['fasnet'],
-                'FTNet': model_ans['FTNet'],
-                'default': model_ans['default'],
-                'rose_full_374': model_ans['rose_full_374'],
-            }   
-            # adding data to dataframe    
-            # df = df.append(data)
-            df = pd.concat([df, pd.DataFrame(data, index=[1])])
-        except Exception as ex:
-            print(ex)
-        # with Blurness
-        for model in tqdm(models):
-            payload = json.dumps({
+
+            blur_payload = json.dumps({
                 "model": "{}".format(model),
                 "single_face_only": single_face_only,
                 "with_filter": False,
@@ -87,13 +70,11 @@ for folder in folders:
                 "color_image_only": color_image_only,
                 "image_b64": "{}".format(encoded_string)
             })
-            headers = {
-                'Content-Type': 'application/json'
-            }
-            response = requests.request("POST", url, headers=headers, data=payload)
+
+            blur_response = requests.request("POST", url, headers=headers, data=blur_payload)
             try:
-                result = response.json()['liveness_result']       
-                model_ans_blur[model] = result['is_real']
+                blur_result = blur_response.json()['liveness_result']       
+                model_ans_blur[model] = blur_result['is_real']
             except Exception as ex:
                 try:
                     model_ans_blur[model] = response.json()['detail']
@@ -102,14 +83,16 @@ for folder in folders:
         try: 
             data = {
                 'image': image,
+                'fasnet': model_ans['fasnet'],
+                'FTNet': model_ans['FTNet'],
+                'default': model_ans['default'],
+                'rose_full_374': model_ans['rose_full_374'],
                 'blur-fasnet': model_ans_blur['fasnet'],
                 'blur-FTNet': model_ans_blur['FTNet'],
                 'blur-default': model_ans_blur['default'],
                 'blur-rose_full_374': model_ans_blur['rose_full_374'],
-            }                    
-            # df = df.append(data)
-            df = pd.concat([df, pd.DataFrame(data, index=[1])])
-
+            }   
+            df = df.append(data, ignore_index=True)
         except Exception as ex:
             print(ex)
         
