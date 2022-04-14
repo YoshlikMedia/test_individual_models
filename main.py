@@ -8,6 +8,7 @@ from tqdm import tqdm
 url = "http://192.168.0.199:5000/api/v1/detect-liveness"
 models = ['fasnet', 'FTNet', 'default', 'rose_full_374']
 images_path = '/home/myid/test/test_individual_models/'
+# images_path = '/Users/yoshlikmedia/Projects/test_individual_model/'
 df = pd.DataFrame()
 folders = ['AA3642573/', 'AA4469267/', 'AC2155899/']
 
@@ -71,5 +72,5 @@ for folder in folders:
     #         df = df.append(data, ignore_index=True)
     #     except Exception as ex:
     #         print(ex)
-
-    df.to_excel(f'{images_path + folder}/{folder}.xlsx')
+    print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
+    # df.to_excel(f'{images_path + folder}/{folder}.xlsx')
