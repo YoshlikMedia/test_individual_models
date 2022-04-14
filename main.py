@@ -38,7 +38,7 @@ for folder in folders:
 
     for image in tqdm(images):
         model_ans = {}
-        model_ans_blur = []
+        model_ans_blur = {}
         image_path = images_path + folder + image
         encoded_string = base64_encode(image_path)
 
@@ -94,7 +94,7 @@ for folder in folders:
             }   
 
             df = df.append(data, ignore_index=True)
-            print(df)
+            print(data)
         except Exception as ex:
             print(ex)
         
