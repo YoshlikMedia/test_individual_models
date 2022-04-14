@@ -74,3 +74,4 @@ for folder in folders:
             print(ex)
     print(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
     df.to_excel(f'{images_path + folder[:-1]}/{folder[:-1]}.xlsx')
+    df = pd.DataFrame()
